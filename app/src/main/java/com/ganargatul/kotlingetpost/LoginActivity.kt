@@ -1,6 +1,8 @@
 package com.ganargatul.kotlingetpost
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -16,10 +18,16 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 class LoginActivity : AppCompatActivity() {
-
+    lateinit var  sharedPreferences: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        sharedPreferences = applicationContext.getSharedPreferences("is_Login",Context.MODE_PRIVATE)
+        val boolean = sharedPreferences.getBoolean("is_login", false)
+
+        if (boolean){
+            startActivity(Intent(applicationContext,MainActivity::class.java))
+        }
         login.setOnClickListener{
             submitlogin()
         }
@@ -39,6 +47,9 @@ class LoginActivity : AppCompatActivity() {
         val obj = JSONObject(string)
         if (obj.getString("token").isNotEmpty()){
 //            var intent = Intent(LoginActivity.this,MainActivity.class)
+            var editor = sharedPreferences.edit()
+            editor.putBoolean("is_login",true)
+            editor.commit()
             startActivity(Intent(applicationContext,MainActivity::class.java))
         }
     }
